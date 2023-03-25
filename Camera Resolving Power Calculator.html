@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Resolving Power Calculator</title>
+    <style>
+        label {
+            display: block;
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Camera Resolving Power Calculator</h1>
+    <form id="calculator-form">
+        <label for="sensorWidth">Sensor width (mm):</label>
+        <input type="number" id="sensorWidth" required>
+
+        <label for="sensorHeight">Sensor height (mm):</label>
+        <input type="number" id="sensorHeight" required>
+
+        <label for="sensorResolution">Sensor resolution (MP):</label>
+        <input type="number" id="sensorResolution" step="any" required>
+
+        <label for="focalLength">Lens' focal length (mm):</label>
+        <input type="number" id="focalLength" required>
+
+        <label for="objectDistance">Distance of the object (meters):</label>
+        <input type="number" id="objectDistance" required>
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    <h2>Results</h2>
+    <p>Pixel size (µm): <span id="pixelSize"></span></p>
+    <p>Angular resolution (arcseconds): <span id="angularResolution"></span></p>
+    <p>Object space resolution (mm): <span id="objectSpaceResolution"></span></p>
+
+    <script>
+        function calculatePixelSize(sensorWidth, sensorHeight, sensorResolution) {
+            const totalPixels = sensorResolution * 1000000;
+            const pixelArea = (sensorWidth * sensorHeight) / totalPixels;
+            return Math.sqrt(pixelArea) * 1000;
+        }
+
+        function calculateAngularResolution(pixelSize, focalLength) {
+            const angularResolution = pixelSize / (focalLength * 1000);
+            return angularResolution * (180 / Math.PI) * 3600;
+        }
+
+        function calculateObjectSpaceResolution(angularResolution, objectDistance) {
+            const angularResolutionRadians = angularResolution / (180 / Math.PI) / 3600;
+            return angularResolutionRadians * objectDistance * 1000;
+        }
+
+        document.getElementById("calculator-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const sensorWidth = parseFloat(document.getElementById("sensorWidth").value);
+            const sensorHeight = parseFloat(document.getElementById("sensorHeight").value);
+            const sensorResolution = parseFloat(document.getElementById("sensorResolution").value);
+            const focalLength = parseFloat(document.getElementById("focalLength").value);
+            const objectDistance = parseFloat(document.getElementById("objectDistance").value);
+
+            const pixelSize = calculatePixelSize(sensorWidth, sensorHeight, sensorResolution);
+            const angularResolution = calculateAngularResolution(pixelSize, focalLength);
+            const objectSpaceResolution = calculateObjectSpaceResolution(angularResolution, objectDistance);
+
+            document.getElementById("pixelSize").textContent = pixelSize.toFixed(2);
+            document.getElementById("angularResolution").textContent = angularResolution.toFixed(2);
+            document.getElementById("objectSpaceResolution").textContent = objectSpaceResolution.toFixed(2);
+        });
+    </script>
+</body>
+</html>
