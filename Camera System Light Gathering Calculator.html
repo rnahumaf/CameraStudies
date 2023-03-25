@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera System Light Gathering Calculator</title>
+</head>
+<body>
+    <h1>Camera System Light Gathering Calculator</h1>
+    <form id="camera-form">
+        <label for="sensor-width">Sensor width (mm):</label>
+        <input type="number" id="sensor-width" step="0.01"><br><br>
+
+        <label for="sensor-height">Sensor height (mm):</label>
+        <input type="number" id="sensor-height" step="0.01"><br><br>
+
+        <label for="sensor-resolution">Sensor resolution (MP):</label>
+        <input type="number" id="sensor-resolution" step="0.1"><br><br>
+
+        <label for="focal-length">Focal length of the lens (mm):</label>
+        <input type="number" id="focal-length" step="0.01"><br><br>
+
+        <label for="f-stop">f-stop of the lens (number):</label>
+        <input type="number" id="f-stop" step="0.1" min="0.1"><br><br>
+
+        <button type="button" onclick="calculate()">Calculate</button>
+    </form>
+
+    <h2>Results:</h2>
+    <div id="results"></div>
+
+    <script>
+        function calculate() {
+            const sensorWidth = parseFloat(document.getElementById("sensor-width").value);
+            const sensorHeight = parseFloat(document.getElementById("sensor-height").value);
+            const sensorResolution = parseFloat(document.getElementById("sensor-resolution").value) * 1000000;
+            const focalLength = parseFloat(document.getElementById("focal-length").value);
+            const fStop = parseFloat(document.getElementById("f-stop").value);
+
+            // Calculate the total number of pixels on the sensor
+            const totalPixels = sensorWidth * sensorHeight;
+
+            // Calculate the number of pixels along the width of the sensor
+            const sensorWidthPixels = Math.sqrt((sensorResolution) * (sensorWidth / sensorHeight));
+
+            // Calculate the pixel size (in micrometers)
+            const pixelSize = (sensorWidth / sensorWidthPixels) * 1000;
+
+            // Calculate aperture diameter
+            const apertureDiameter = focalLength / fStop;
+
+            // Calculate aperture area
+            const apertureArea = Math.PI * Math.pow(apertureDiameter / 2, 2);
+
+            // Calculate light gathering ability per pixel
+            const lightGatheringPerPixel = (apertureArea / Math.pow(pixelSize / 1000, 2))/1000000;
+
+            document.getElementById("results").innerHTML = `
+                Pixel size: ${pixelSize.toFixed(2)} µm<br>
+                Aperture diameter: ${apertureDiameter.toFixed(2)} mm<br>
+                Aperture area: ${apertureArea.toFixed(2)} mm²<br>
+                Light gathering ability per pixel: ${lightGatheringPerPixel.toFixed(2)} million units
+            `;
+        }
+    </script>
+</body>
+</html>
